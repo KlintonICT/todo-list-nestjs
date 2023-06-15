@@ -5,13 +5,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
+import { Subtask } from 'src/subtask/entities/subtask.entity';
 import { ResponseHandler } from 'src/utils/response-handler';
+import { Status } from 'src/utils/constant';
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(Subtask)
+    private readonly subtaskRepository: Repository<Subtask>,
   ) {}
 
   async create(data: CreateTaskDto) {
@@ -32,7 +36,20 @@ export class TaskService {
     return `This action returns all task`;
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: number, data: UpdateTaskDto) {
+    const { status } = data;
+
+    const hasTask = await this.taskRepository.findOneBy({ id });
+
+    if (!hasTask) {
+      ResponseHandler.notFound(`${id} not found`);
+    }
+
+    await Promise.all([
+      this.taskRepository.update(id, { status }),
+      this.subtaskRepository.update({ todo_id: { id } }, { status }),
+    ]);
+
+    ResponseHandler.ok(`todo ${id} has successfully updated`);
   }
 }
