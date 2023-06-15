@@ -7,7 +7,6 @@ import { UpdateTaskDto } from './dto/update-task.dto';
 import { Task } from './entities/task.entity';
 import { Subtask } from 'src/subtask/entities/subtask.entity';
 import { ResponseHandler } from 'src/utils/response-handler';
-import { Status } from 'src/utils/constant';
 
 @Injectable()
 export class TaskService {

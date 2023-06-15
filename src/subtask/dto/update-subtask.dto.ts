@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateSubtaskDto } from './create-subtask.dto';
+import { IsNotEmpty, IsEnum } from 'class-validator';
 
-export class UpdateSubtaskDto extends PartialType(CreateSubtaskDto) {}
+import { Status } from 'src/utils/constant';
+
+export class UpdateSubtaskDto {
+  @IsNotEmpty()
+  @IsEnum(Status, {
+    message:
+      'Invalid status. Status should be either "pending" or "completed".',
+  })
+  status: Status;
+}

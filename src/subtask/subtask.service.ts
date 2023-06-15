@@ -43,7 +43,36 @@ export class SubtaskService {
     ResponseHandler.ok(`${title} has successfully created`);
   }
 
-  update(id: number, updateSubtaskDto: UpdateSubtaskDto) {
-    return `This action updates a #${id} subtask`;
+  async update(id: number, data: UpdateSubtaskDto) {
+    const { status } = data;
+
+    const subtask = await this.subtaskRepository.findOne({
+      where: { id },
+      relations: ['todo_id'],
+    });
+
+    if (!subtask) {
+      ResponseHandler.conflict(`${id} has not found`);
+    }
+
+    await this.subtaskRepository.update(id, { status });
+
+    const allSubtasks = await this.subtaskRepository.find({
+      where: { todo_id: { id: subtask.todo_id.id } },
+    });
+
+    const isTodoCompleted = allSubtasks.every(
+      (subtask) => subtask.status === Status.COMPLETED,
+    );
+
+    await this.taskRepository.update(subtask.todo_id.id, {
+      status: isTodoCompleted ? Status.COMPLETED : Status.PENDING,
+    });
+
+    ResponseHandler.ok({
+      message: `subtask ${id} has successfully updated`,
+      todo_id: subtask.todo_id.id,
+      isTodoCompleted,
+    });
   }
 }
