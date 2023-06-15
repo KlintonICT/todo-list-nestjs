@@ -3,10 +3,11 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
-import { Subtask } from 'src/subtask/entities/subtask.entity';
+import { Task } from 'src/task/entities/task.entity';
 
 export enum Status {
   COMPLETED = 'completed',
@@ -14,11 +15,11 @@ export enum Status {
 }
 
 @Entity()
-export class Task {
+export class Subtask {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', nullable: false, length: 255, unique: true })
+  @Column({ type: 'varchar', nullable: false, length: 255 })
   title: string;
 
   @Column({
@@ -32,6 +33,10 @@ export class Task {
   @CreateDateColumn()
   created_at: Date;
 
-  @OneToMany(() => Subtask, (subtask) => subtask.todo_id)
-  subtasks: Subtask[];
+  @ManyToOne(() => Task, (task) => task.id, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  @JoinColumn({ name: 'todo_id' })
+  todo_id: Task;
 }
