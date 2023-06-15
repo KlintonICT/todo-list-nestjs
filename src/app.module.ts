@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -16,13 +17,15 @@ import { AppService } from './app.service';
       useFactory: async (cs: ConfigService) => ({
         type: 'postgres',
         autoLoadEntities: true,
+        synchronize: true,
         host: cs.get('POSTGRES_HOST'),
-        port: cs.get('POSTGRES_PORT'),
-        username: cs.get('POSTGRES_USERNAME'),
+        port: +cs.get('POSTGRES_PORT'),
+        username: cs.get('POSTGRES_USER'),
         password: cs.get('POSTGRES_PASSWORD'),
-        database: cs.get('POSTGRES_DATABASE'),
+        database: cs.get('POSTGRES_DB'),
       }),
     }),
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
