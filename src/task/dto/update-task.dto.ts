@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsEnum } from 'class-validator';
 
-import { Status } from '../entities/task.entity';
+import { Status } from 'src/utils/constant';
 
 export class UpdateTaskDto {
   @IsNotEmpty()

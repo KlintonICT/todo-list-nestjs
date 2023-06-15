@@ -5,8 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateSubtaskDto } from './dto/create-subtask.dto';
 import { UpdateSubtaskDto } from './dto/update-subtask.dto';
 import { Subtask } from './entities/subtask.entity';
-import { Task, Status as TaskStatus } from 'src/task/entities/task.entity';
+import { Task } from 'src/task/entities/task.entity';
 import { ResponseHandler } from 'src/utils/response-handler';
+import { Status } from 'src/utils/constant';
 
 @Injectable()
 export class SubtaskService {
@@ -35,7 +36,7 @@ export class SubtaskService {
     }
 
     await Promise.all([
-      this.taskRepository.update(todo_id, { status: TaskStatus.PENDING }),
+      this.taskRepository.update(todo_id, { status: Status.PENDING }),
       this.subtaskRepository.save({ title, todo_id: task }),
     ]);
 

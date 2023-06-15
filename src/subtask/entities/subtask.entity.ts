@@ -8,11 +8,7 @@ import {
 } from 'typeorm';
 
 import { Task } from 'src/task/entities/task.entity';
-
-export enum Status {
-  COMPLETED = 'completed',
-  PENDING = 'pending',
-}
+import { Status } from 'src/utils/constant';
 
 @Entity()
 export class Subtask {
