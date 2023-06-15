@@ -32,7 +32,9 @@ export class TaskService {
   }
 
   async findAll() {
-    return `This action returns all task`;
+    const tasks = await this.taskRepository.find({ relations: ['subtasks'] });
+
+    ResponseHandler.ok(tasks);
   }
 
   async update(id: number, data: UpdateTaskDto) {
