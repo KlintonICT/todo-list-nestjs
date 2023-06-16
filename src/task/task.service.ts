@@ -26,9 +26,12 @@ export class TaskService {
       ResponseHandler.conflict(`${title} already exists`);
     }
 
-    await this.taskRepository.save({ title });
+    const task = await this.taskRepository.save({ title });
 
-    ResponseHandler.ok(`${title} has successfully created`);
+    ResponseHandler.ok({
+      message: `${title} has successfully created`,
+      data: { ...task, subtasks: [] },
+    });
   }
 
   async findAll() {
