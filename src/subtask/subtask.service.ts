@@ -35,12 +35,15 @@ export class SubtaskService {
       ResponseHandler.conflict(`${title} already exists`);
     }
 
-    await Promise.all([
-      this.taskRepository.update(todo_id, { status: Status.PENDING }),
+    const [subtask] = await Promise.all([
       this.subtaskRepository.save({ title, todo_id: task }),
+      this.taskRepository.update(todo_id, { status: Status.PENDING }),
     ]);
 
-    ResponseHandler.ok(`${title} has successfully created`);
+    ResponseHandler.ok({
+      message: `${title} has successfully created`,
+      data: subtask,
+    });
   }
 
   async update(id: number, data: UpdateSubtaskDto) {

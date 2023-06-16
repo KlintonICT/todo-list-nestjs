@@ -35,7 +35,15 @@ export class TaskService {
   }
 
   async findAll() {
-    const tasks = await this.taskRepository.find({ relations: ['subtasks'] });
+    const tasks = await this.taskRepository.find({
+      relations: ['subtasks'],
+      order: {
+        created_at: 'ASC',
+        subtasks: {
+          created_at: 'ASC',
+        },
+      },
+    });
 
     ResponseHandler.ok(tasks);
   }
