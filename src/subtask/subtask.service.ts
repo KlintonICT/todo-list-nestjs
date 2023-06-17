@@ -24,7 +24,7 @@ export class SubtaskService {
     const task = await this.taskRepository.findOneBy({ id: todo_id });
 
     if (!task) {
-      ResponseHandler.notFound(`${todo_id} has not found`);
+      ResponseHandler.notFound(`todo ${todo_id} has not found`);
     }
 
     const hasSubtask = await this.subtaskRepository.findOne({
@@ -40,10 +40,10 @@ export class SubtaskService {
       this.taskRepository.update(todo_id, { status: Status.PENDING }),
     ]);
 
-    ResponseHandler.ok({
+    return {
       message: `${title} has successfully created`,
       data: subtask,
-    });
+    };
   }
 
   async update(id: number, data: UpdateSubtaskDto) {
