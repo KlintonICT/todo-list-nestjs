@@ -72,10 +72,10 @@ export class SubtaskService {
       status: isTodoCompleted ? STATUS.COMPLETED : STATUS.PENDING,
     });
 
-    ResponseHandler.ok({
+    return {
       message: `subtask ${id} has successfully updated`,
       todo_id: subtask.todo_id.id,
       todoStatus: isTodoCompleted ? STATUS.COMPLETED : STATUS.PENDING,
-    });
+    };
   }
 }

@@ -5,7 +5,7 @@ import { HttpException } from '@nestjs/common';
 import { SubtaskService } from './subtask.service';
 import { Subtask } from './entities/subtask.entity';
 import { Task } from 'src/task/entities/task.entity';
-import { Status } from 'src/utils/constant';
+import { STATUS } from 'src/utils/constant';
 
 const mockTaskRepository = {
   findOneBy: jest.fn(),
@@ -85,7 +85,7 @@ describe('SubtaskService', () => {
         todo_id: foundTask,
       });
       expect(mockTaskRepository.update).toBeCalledWith(mockData.todo_id, {
-        status: Status.PENDING,
+        status: STATUS.PENDING,
       });
     });
 
@@ -132,6 +132,110 @@ describe('SubtaskService', () => {
         });
         expect(mockSubtaskRepository.findOne).toBeCalledWith({
           where: { title: mockData.title, todo_id: { id: mockData.todo_id } },
+        });
+      }
+    });
+  });
+
+  describe('update', () => {
+    it('should return successfully updated response when update success', async () => {
+      const [id, status] = [1, STATUS.COMPLETED];
+      const subtask = {
+        id: 1,
+        title: 'Subtask1',
+        status: 'pending',
+        create_at: new Date(),
+      };
+      const foundSubtaskWithTodoRelation = {
+        ...subtask,
+        todo_id: {
+          id: 1,
+          title: 'todo1',
+          status: 'pending',
+          create_at: new Date(),
+        },
+      };
+      const foundAllSubtasks = [subtask];
+
+      mockSubtaskRepository.findOne.mockResolvedValue(
+        foundSubtaskWithTodoRelation,
+      );
+      mockSubtaskRepository.find.mockResolvedValue(foundAllSubtasks);
+      jest.spyOn(foundAllSubtasks, 'every').mockImplementation(() => true);
+
+      const result = await service.update(id, { status });
+
+      expect(result).toStrictEqual({
+        message: `subtask ${id} has successfully updated`,
+        todo_id: foundSubtaskWithTodoRelation.todo_id.id,
+        todoStatus: STATUS.COMPLETED,
+      });
+      expect(mockSubtaskRepository.findOne).toBeCalledWith({
+        where: { id },
+        relations: ['todo_id'],
+      });
+      expect(mockSubtaskRepository.update).toBeCalledWith(id, { status });
+      expect(mockSubtaskRepository.find).toBeCalledWith({
+        where: { todo_id: { id: foundSubtaskWithTodoRelation.todo_id.id } },
+      });
+      expect(
+        foundAllSubtasks.every(
+          (subtask) => subtask.status === STATUS.COMPLETED,
+        ),
+      ).toBe(true);
+      expect(mockTaskRepository.update).toBeCalledWith(
+        foundSubtaskWithTodoRelation.todo_id.id,
+        { status: STATUS.COMPLETED },
+      );
+    });
+
+    it('should return "todoStatus=pending" when update subtask to pending', async () => {
+      const [id, status] = [1, STATUS.PENDING];
+      const subtask = {
+        id: 1,
+        title: 'Subtask1',
+        status: 'completed',
+        create_at: new Date(),
+      };
+      const foundSubtaskWithTodoRelation = {
+        ...subtask,
+        todo_id: {
+          id: 1,
+          title: 'todo1',
+          status: 'pending',
+          create_at: new Date(),
+        },
+      };
+      const foundAllSubtasks = [subtask];
+
+      mockSubtaskRepository.findOne.mockResolvedValue(
+        foundSubtaskWithTodoRelation,
+      );
+      mockSubtaskRepository.find.mockResolvedValue(foundAllSubtasks);
+      jest.spyOn(foundAllSubtasks, 'every').mockImplementation(() => false);
+
+      const result = await service.update(id, { status });
+
+      expect(result).toStrictEqual({
+        message: `subtask ${id} has successfully updated`,
+        todo_id: foundSubtaskWithTodoRelation.todo_id.id,
+        todoStatus: STATUS.PENDING,
+      });
+    });
+
+    it('should throw "999 has not found" when send subtask id=999 that is not in DB', async () => {
+      const [id, status] = [999, STATUS.COMPLETED];
+
+      mockSubtaskRepository.findOne.mockResolvedValue(undefined);
+
+      try {
+        await service.update(id, { status });
+      } catch (error) {
+        expect(error).toBeInstanceOf(HttpException);
+        expect(error.message).toStrictEqual('999 has not found');
+        expect(mockSubtaskRepository.findOne).toBeCalledWith({
+          where: { id },
+          relations: ['todo_id'],
         });
       }
     });
