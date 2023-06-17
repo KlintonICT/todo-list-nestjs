@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Subtask } from 'src/subtask/entities/subtask.entity';
-import { Status } from 'src/utils/constant';
+import { STATUS } from 'src/utils/constant';
 
 @Entity()
 export class Task {
@@ -20,8 +20,8 @@ export class Task {
   @Column({
     type: 'enum',
     nullable: false,
-    enum: Status,
-    default: Status.PENDING,
+    enum: STATUS,
+    default: STATUS.PENDING,
   })
   status: string;
 

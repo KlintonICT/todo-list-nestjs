@@ -5,7 +5,7 @@ import { TaskController } from './task.controller';
 import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
 import { Subtask } from 'src/subtask/entities/subtask.entity';
-import { Status } from 'src/utils/constant';
+import { STATUS } from 'src/utils/constant';
 
 describe('TaskController', () => {
   let controller: TaskController;
@@ -61,7 +61,7 @@ describe('TaskController', () => {
   });
 
   it('"update" should call "update" service function', async () => {
-    const [id, status] = ['1', Status.COMPLETED];
+    const [id, status] = ['1', STATUS.COMPLETED];
 
     jest.spyOn(service, 'update');
 

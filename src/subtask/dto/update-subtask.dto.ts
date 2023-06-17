@@ -1,12 +1,12 @@
 import { IsNotEmpty, IsEnum } from 'class-validator';
 
-import { Status } from 'src/utils/constant';
+import { STATUS } from 'src/utils/constant';
 
 export class UpdateSubtaskDto {
   @IsNotEmpty()
-  @IsEnum(Status, {
+  @IsEnum(STATUS, {
     message:
-      'Invalid status. Status should be either "pending" or "completed".',
+      'Invalid status. STATUS should be either "pending" or "completed".',
   })
-  status: Status;
+  status: STATUS;
 }

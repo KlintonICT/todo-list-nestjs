@@ -7,7 +7,7 @@ import { UpdateSubtaskDto } from './dto/update-subtask.dto';
 import { Subtask } from './entities/subtask.entity';
 import { Task } from 'src/task/entities/task.entity';
 import { ResponseHandler } from 'src/utils/response-handler';
-import { Status } from 'src/utils/constant';
+import { STATUS } from 'src/utils/constant';
 
 @Injectable()
 export class SubtaskService {
@@ -37,7 +37,7 @@ export class SubtaskService {
 
     const [subtask] = await Promise.all([
       this.subtaskRepository.save({ title, todo_id: task }),
-      this.taskRepository.update(todo_id, { status: Status.PENDING }),
+      this.taskRepository.update(todo_id, { status: STATUS.PENDING }),
     ]);
 
     return {
@@ -65,17 +65,17 @@ export class SubtaskService {
     });
 
     const isTodoCompleted = allSubtasks.every(
-      (subtask) => subtask.status === Status.COMPLETED,
+      (subtask) => subtask.status === STATUS.COMPLETED,
     );
 
     await this.taskRepository.update(subtask.todo_id.id, {
-      status: isTodoCompleted ? Status.COMPLETED : Status.PENDING,
+      status: isTodoCompleted ? STATUS.COMPLETED : STATUS.PENDING,
     });
 
     ResponseHandler.ok({
       message: `subtask ${id} has successfully updated`,
       todo_id: subtask.todo_id.id,
-      todoStatus: isTodoCompleted ? Status.COMPLETED : Status.PENDING,
+      todoStatus: isTodoCompleted ? STATUS.COMPLETED : STATUS.PENDING,
     });
   }
 }

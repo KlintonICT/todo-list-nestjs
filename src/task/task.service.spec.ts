@@ -5,7 +5,7 @@ import { HttpException } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
 import { Subtask } from 'src/subtask/entities/subtask.entity';
-import { Status } from 'src/utils/constant';
+import { STATUS } from 'src/utils/constant';
 
 const mockTaskRepository = {
   findOneBy: jest.fn(),
@@ -132,7 +132,7 @@ describe('TaskService', () => {
 
   describe('update', () => {
     it('should return "todo 1 has successfully updated"', async () => {
-      const [id, status] = [1, Status.COMPLETED];
+      const [id, status] = [1, STATUS.COMPLETED];
       const foundTodo = {
         id: 1,
         title: 'Todo1',
@@ -154,7 +154,7 @@ describe('TaskService', () => {
     });
 
     it('should throw "1 not found"', async () => {
-      const [id, status] = [1, Status.COMPLETED];
+      const [id, status] = [1, STATUS.COMPLETED];
 
       mockTaskRepository.findOneBy.mockResolvedValue(undefined);
 
