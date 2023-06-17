@@ -54,7 +54,7 @@ describe('TaskService', () => {
         id: 1,
         title: 'Todo1',
         status: 'pending',
-        created_at: '2023-06-16 09:43:22.444',
+        created_at: new Date(),
       };
 
       mockTaskRepository.findOneBy.mockResolvedValue(undefined);
@@ -79,7 +79,7 @@ describe('TaskService', () => {
         id: 1,
         title: 'Todo1',
         status: 'pending',
-        created_at: '2023-06-16 09:43:22.444',
+        created_at: new Date(),
       };
 
       mockTaskRepository.findOneBy.mockResolvedValue(foundTodo);
@@ -102,13 +102,13 @@ describe('TaskService', () => {
           id: 1,
           title: 'Todo1',
           status: 'pending',
-          created_at: '2023-06-16T09:43:22.444Z',
+          created_at: new Date(),
           subtasks: [
             {
               id: 1,
               title: 'Subtask1',
               status: 'pending',
-              created_at: '2023-06-16T09:43:45.268Z',
+              created_at: new Date(),
             },
           ],
         },
@@ -137,7 +137,7 @@ describe('TaskService', () => {
         id: 1,
         title: 'Todo1',
         status: 'pending',
-        created_at: '2023-06-16 09:43:22.444',
+        created_at: new Date(),
       };
 
       mockTaskRepository.findOneBy.mockResolvedValue(foundTodo);
