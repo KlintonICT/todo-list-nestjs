@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { HttpException } from '@nestjs/common';
 
 import { TaskService } from './task.service';
 import { Task } from './entities/task.entity';
 import { Subtask } from 'src/subtask/entities/subtask.entity';
+import { Status } from 'src/utils/constant';
 
 const mockTaskRepository = {
   findOneBy: jest.fn(),
@@ -85,7 +87,10 @@ describe('TaskService', () => {
       try {
         await service.create(mockData);
       } catch (error) {
-        expect(error?.message).toEqual(`${mockData.title} already exists`);
+        expect(error).toBeInstanceOf(HttpException);
+        expect(error?.message).toStrictEqual(
+          `${mockData.title} already exists`,
+        );
       }
     });
   });
@@ -122,6 +127,44 @@ describe('TaskService', () => {
       const result = await service.findAll();
       expect(result).toStrictEqual([]);
       expect(mockTaskRepository.find).toBeCalled();
+    });
+  });
+
+  describe('update', () => {
+    it('should return "todo 1 has successfully updated"', async () => {
+      const [id, status] = [1, Status.COMPLETED];
+      const foundTodo = {
+        id: 1,
+        title: 'Todo1',
+        status: 'pending',
+        created_at: '2023-06-16 09:43:22.444',
+      };
+
+      mockTaskRepository.findOneBy.mockResolvedValue(foundTodo);
+
+      const result = await service.update(id, { status });
+
+      expect(mockTaskRepository.findOneBy).toBeCalledWith({ id });
+      expect(mockTaskRepository.update).toBeCalledWith(id, { status });
+      expect(mockSubtaskRepository.update).toBeCalledWith(
+        { todo_id: { id } },
+        { status },
+      );
+      expect(result).toStrictEqual(`todo ${id} has successfully updated`);
+    });
+
+    it('should throw "1 not found"', async () => {
+      const [id, status] = [1, Status.COMPLETED];
+
+      mockTaskRepository.findOneBy.mockResolvedValue(undefined);
+
+      try {
+        await service.update(id, { status });
+      } catch (error) {
+        expect(error).toBeInstanceOf(HttpException);
+        expect(error.message).toStrictEqual(`${id} not found`);
+        expect(mockTaskRepository.findOneBy).toBeCalledWith({ id });
+      }
     });
   });
 });

@@ -63,6 +63,6 @@ export class TaskService {
       this.subtaskRepository.update({ todo_id: { id } }, { status }),
     ]);
 
-    ResponseHandler.ok(`todo ${id} has successfully updated`);
+    return `todo ${id} has successfully updated`;
   }
 }
