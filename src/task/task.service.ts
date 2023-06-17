@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -28,10 +29,10 @@ export class TaskService {
 
     const task = await this.taskRepository.save({ title });
 
-    ResponseHandler.ok({
+    return {
       message: `${title} has successfully created`,
       data: { ...task, subtasks: [] },
-    });
+    };
   }
 
   async findAll() {
