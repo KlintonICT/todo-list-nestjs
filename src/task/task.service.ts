@@ -46,7 +46,7 @@ export class TaskService {
       },
     });
 
-    ResponseHandler.ok(tasks);
+    return tasks;
   }
 
   async update(id: number, data: UpdateTaskDto) {

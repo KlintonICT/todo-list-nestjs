@@ -89,4 +89,39 @@ describe('TaskService', () => {
       }
     });
   });
+
+  describe('findAll', () => {
+    it('should return all todos when success', async () => {
+      const todoList = [
+        {
+          id: 1,
+          title: 'Todo1',
+          status: 'pending',
+          created_at: '2023-06-16T09:43:22.444Z',
+          subtasks: [
+            {
+              id: 1,
+              title: 'Subtask1',
+              status: 'pending',
+              created_at: '2023-06-16T09:43:45.268Z',
+            },
+          ],
+        },
+      ];
+
+      mockTaskRepository.find.mockResolvedValue(todoList);
+
+      const result = await service.findAll();
+
+      expect(result).toStrictEqual(todoList);
+      expect(mockTaskRepository.find).toBeCalled();
+    });
+
+    it('should return [] when there are no todo in DB', async () => {
+      mockTaskRepository.find.mockResolvedValue([]);
+      const result = await service.findAll();
+      expect(result).toStrictEqual([]);
+      expect(mockTaskRepository.find).toBeCalled();
+    });
+  });
 });
