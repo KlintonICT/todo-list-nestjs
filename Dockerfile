@@ -1,20 +1,20 @@
-# Base image
 FROM node:18-alpine
 
-# Set the working directory
-WORKDIR /app
+# Add package file
+COPY package.json ./
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
+# Install deps
 RUN yarn install
 
-# Copy the rest of the application files
-COPY . .
+# Copy sources
+COPY src ./src
+COPY tsconfig.json ./tsconfig.json
 
-# Expose port
+# Build dist
+RUN yarn build
+
+# Expose port 4000
 EXPOSE 4000
 
-# Start the application
+# start app
 CMD ["yarn", "start:dev"]
